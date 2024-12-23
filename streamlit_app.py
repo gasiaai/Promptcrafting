@@ -25,8 +25,8 @@ def read_settings():
             'num_prompts': settings.getint('num_prompts', 1),
             'model': settings.get('model', 'gpt-4o-mini'),
             'ar_mode': settings.get('ar_mode', 'Preset'),       # เก็บโหมดว่า "Preset" หรือ "Custom"
-            'ar_preset': settings.get('ar_preset', '--ar 16:9'), # เก็บค่าที่เลือกในกรณีเป็น Preset
-            'ar_custom': settings.get('ar_custom', '')          # เก็บค่าที่ผู้ใช้กรอกเอง
+            'ar_preset': settings.get('ar_preset', '--ar 16:9'), # เก็บค่า AR Preset
+            'ar_custom': settings.get('ar_custom', '')          # เก็บค่า AR Custom
         }
     else:
         return {
@@ -105,7 +105,8 @@ def main():
 
     st.sidebar.markdown("---")
     st.sidebar.write("**Aspect Ratio Setting**")
-    ar_mode = st.sidebar.radio("Choose AR Mode", options=["Preset", "Custom"], index=0 if settings['ar_mode'] == "Preset" else 1)
+    ar_mode = st.sidebar.radio("Choose AR Mode", options=["Preset", "Custom"],
+                               index=0 if settings['ar_mode'] == "Preset" else 1)
 
     # ถ้าเลือก preset
     preset_choices = ["--ar 3:2", "--ar 16:9", "--ar 7:3", "--ar 1:1"]
@@ -124,7 +125,8 @@ def main():
 
     # ปุ่มบันทึกการตั้งค่า
     if st.sidebar.button("Save Settings"):
-        save_settings(api_key, initial_keywords, temperature_slider, num_prompts, model_name, ar_mode, ar_preset, ar_custom)
+        save_settings(api_key, initial_keywords, temperature_slider, num_prompts, model_name,
+                      ar_mode, ar_preset, ar_custom)
         st.sidebar.success("Settings saved successfully.")
 
     # -----------------------------
@@ -146,10 +148,12 @@ def main():
             if not rules_content:
                 st.error("Please make sure rules.txt exists and is not empty.")
             else:
-                # เตรียม prompt
+                # เตรียม prompt (system_message)
                 system_message = "You are an AI assistant that generates concise prompts based on given keywords and rules."
+
+                # Map อุณหภูมิจาก 0-10 ให้เป็น 0-2 หรือ 0-1.5 ตามต้องการ
                 temperature_value = temperature_slider
-                temperature_mapped = (temperature_value / 10) * 1.5  # ลดจาก *2 เป็น *1.5
+                temperature_mapped = (temperature_value / 10) * 1.5  # ตัวอย่างใช้ x1.5
 
                 generated_prompts = []
                 # เลือกว่าจะใช้ preset หรือ custom
@@ -157,17 +161,17 @@ def main():
 
                 try:
                     for _ in range(num_prompts):
+                        # คำสั่งให้โมเดลออกมาเป็น single line
                         user_message = (
                             "You are an AI assistant that generates concise SEO-friendly prompts based on given keywords.\n"
                             f"Initial keywords: {initial_keywords}\n"
-                            "Generate concise prompts with 2-3 phrases, separated by commas. Avoid vague language, camera terms, or unnecessary details. answer only in english.\n"
+                            "Generate a concise prompt with 2-3 phrases, separated by commas, in a single line.\n"
+                            "Avoid vague language, camera terms, or unnecessary details. Answer only in English.\n"
                             "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
-                            "Each result should be a single sentence. Use examples below as a guideline:\n"
-                            "Example:\n"
-                            "- Business Collaboration, Professional team brainstorming ideas, Strategy Meeting.\n"
-                            "- Leadership Development, Mentoring session between experienced professionals, Career Planning.\n"
-                            "- Financial Planning, Analyzing market trends, Strategy Discussions.\n"
+                            "Use only one sentence, no bullet points, no extra line breaks.\n"
+                            "Example (SINGLE LINE): Business Theme Ideas, Creative concepts for corporate branding, Engaging corporate event themes.\n"
                         )
+
                         response = openai.ChatCompletion.create(
                             model=model_name,
                             messages=[
@@ -181,7 +185,10 @@ def main():
                         )
 
                         generated_text = response.choices[0].message['content'].strip()
-                        # ถ้า final_ar มีค่า (ไม่เป็นค่าว่าง) ให้เพิ่มต่อท้าย
+                        # ลบการขึ้นบรรทัดทั้งหมด เพื่อบีบให้เป็น single line
+                        generated_text = generated_text.replace("\n", " ")
+
+                        # ถ้ามี final_ar ให้ติดด้านท้าย
                         if final_ar:
                             generated_text += " " + final_ar
 
@@ -218,9 +225,6 @@ def main():
         st.write("### Copy All Prompts")
         st.text_area("All Prompts", value=prompts_text, height=150)
 
-def truncate_prompt(prompt, max_length=77):
-    return ' '.join(prompt.split()[:max_length])
-    
 def convert_to_csv(prompts_list):
     import io
     output = io.StringIO()
