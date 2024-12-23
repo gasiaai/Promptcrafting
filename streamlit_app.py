@@ -150,7 +150,7 @@ def main():
                 # เตรียม prompt
                 system_message = "You are an AI assistant that generates concise prompts based on given keywords and rules."
                 temperature_value = temperature_slider
-                temperature_mapped = (temperature_value / 10) * 2  # 0-10 -> 0-2
+                temperature_mapped = (temperature_value / 10) * 1.5  # ลดจาก *2 เป็น *1.5
 
                 generated_prompts = []
                 # เลือกว่าจะใช้ preset หรือ custom
@@ -159,15 +159,16 @@ def main():
                 try:
                     for _ in range(num_prompts):
                         user_message = (
-                            f"{rules_content}\n"
+                            "You are an AI assistant that generates concise SEO-friendly prompts based on given keywords.\n"
                             f"Initial keywords: {initial_keywords}\n"
-                            "Generate a concise with good SEO title from the input, within 77 tokens.\n"
-                            "Avoid photography-related words like realistic, natural lighting, photography, etc.\n"
-                            "No quotation marks or dashes, use commas for separation if needed.\n"
-                            "Focus on straightforward, richly descriptive titles without vague language or mentioning camera specifics or photography techniques.\n"
-                            "Ensure the response is a single line."
+                            "Generate concise prompts with 2-3 phrases, separated by commas. Avoid vague language, camera terms, or unnecessary details.\n"
+                            "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
+                            "Each result should be a single sentence. Use examples below as a guideline:\n"
+                            "Example:\n"
+                            "- Business Collaboration, Professional team brainstorming ideas, Strategy Meeting.\n"
+                            "- Leadership Development, Mentoring session between experienced professionals, Career Planning.\n"
+                            "- Financial Planning, Analyzing market trends, Strategy Discussions.\n"
                         )
-
                         response = openai.ChatCompletion.create(
                             model=model_name,
                             messages=[
@@ -218,7 +219,9 @@ def main():
         st.write("### Copy All Prompts")
         st.text_area("All Prompts", value=prompts_text, height=150)
 
-
+def truncate_prompt(prompt, max_length=77):
+    return ' '.join(prompt.split()[:max_length])
+    
 def convert_to_csv(prompts_list):
     import io
     output = io.StringIO()
