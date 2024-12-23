@@ -149,46 +149,50 @@ def main():
                 st.error("Please make sure rules.txt exists and is not empty.")
             else:
                 # เตรียม prompt (system_message)
-                system_message = "You are an AI assistant that generates concise prompts based on given keywords and rules."
+                system_message = (
+                    "You are an AI assistant that generates concise prompts based on given keywords and rules."
+                )
 
-                # Map อุณหภูมิจาก 0-10 ให้เป็น 0-2 หรือ 0-1.5 ตามต้องการ
+                # Map อุณหภูมิจาก 0-10 => 0-2 หรือ 0-1.5 ตามต้องการ (ตัวอย่างคูณ 1.5)
                 temperature_value = temperature_slider
-                temperature_mapped = (temperature_value / 10) * 1.5  # ตัวอย่างใช้ x1.5
+                temperature_mapped = (temperature_value / 10) * 1.5
 
-                generated_prompts = []
                 # เลือกว่าจะใช้ preset หรือ custom
                 final_ar = ar_preset if ar_mode == "Preset" else ar_custom
 
+                # ข้อความ user_message
+                user_message = (
+                    f"{rules_content}\n"
+                    f"Initial keywords: {initial_keywords}\n"
+                    "Generate a concise SEO-friendly prompt with 2-3 phrases, separated by commas, in a single line.\n"
+                    "Avoid vague language, camera terms, or unnecessary details. Answer only in English.\n"
+                    "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
+                    "Use only one sentence, no bullet points, no extra line breaks.\n"
+                    "Example (SINGLE LINE): Business Theme Ideas, Creative concepts for corporate branding, Engaging corporate event themes.\n"
+                )
+
                 try:
-                    for _ in range(num_prompts):
-                        # คำสั่งให้โมเดลออกมาเป็น single line
-                        user_message = (
-                            "You are an AI assistant that generates concise SEO-friendly prompts based on given keywords.\n"
-                            f"Initial keywords: {initial_keywords}\n"
-                            "Generate a concise prompt with 2-3 phrases, separated by commas, in a single line.\n"
-                            "Avoid vague language, camera terms, or unnecessary details. Answer only in English.\n"
-                            "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
-                            "Use only one sentence, no bullet points, no extra line breaks.\n"
-                            "Example (SINGLE LINE): Business Theme Ideas, Creative concepts for corporate branding, Engaging corporate event themes.\n"
-                        )
+                    # เรียกใช้ n=num_prompts เพื่อรับผลลัพธ์หลาย Prompt ในครั้งเดียว
+                    response = openai.ChatCompletion.create(
+                        model=model_name,
+                        messages=[
+                            {"role": "system", "content": system_message},
+                            {"role": "user", "content": user_message}
+                        ],
+                        temperature=temperature_mapped,
+                        max_tokens=77,
+                        n=num_prompts,  # <<=== สร้างหลาย Prompt ในครั้งเดียว
+                        stop=None
+                    )
 
-                        response = openai.ChatCompletion.create(
-                            model=model_name,
-                            messages=[
-                                {"role": "system", "content": system_message},
-                                {"role": "user", "content": user_message}
-                            ],
-                            temperature=temperature_mapped,
-                            max_tokens=77,
-                            n=1,
-                            stop=None
-                        )
-
-                        generated_text = response.choices[0].message['content'].strip()
-                        # ลบการขึ้นบรรทัดทั้งหมด เพื่อบีบให้เป็น single line
+                    generated_prompts = []
+                    # วนลูปเก็บ output แต่ละ choice
+                    for choice in response.choices:
+                        generated_text = choice.message['content'].strip()
+                        # ลบการขึ้นบรรทัดทั้งหมดเพื่อบังคับให้เหลือ single line
                         generated_text = generated_text.replace("\n", " ")
 
-                        # ถ้ามี final_ar ให้ติดด้านท้าย
+                        # ถ้ามี final_ar (ไม่ว่าง) ให้ผนวกต่อท้าย
                         if final_ar:
                             generated_text += " " + final_ar
 
