@@ -71,7 +71,7 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "generate concise names and detailed contexts for microstock images, ensuring each response fits within 77 tokens. It structures responses as numbered lists for more than two inputs, ensuring organization and clarity. Each entry is crafted without quotation marks or dashes, using commas for separation. This approach focuses on straightforward, richly descriptive titles without vague language or mentioning camera specifics or photography techniques. For example, for suitable images, it might generate 1. Watercolor Technique, Abstract vibrant background with watercolor blending, Artistic Expression, ensuring clarity, relevance, and rich descriptiveness within the token limit. "
+            "your role is to generate concise names , straight forward and easy to search seo for microstock images, "
             "as numbered lists for more than two inputs, ensuring organization and clarity. Each entry "
             "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
             "approach focuses on straightforward, richly descriptive titles without vague language or "
