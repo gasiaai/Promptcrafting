@@ -5,10 +5,8 @@ import csv
 import os
 
 # -----------------------------
-# กำหนด path สำหรับไฟล์ต่าง ๆ
+# กำหนด path สำหรับไฟล์ settings.ini และ rules.txt
 # -----------------------------
-# ในตัวอย่างนี้ จะถือว่าไฟล์ ini และ txt อยู่ในโฟลเดอร์เดียวกัน
-# กับสคริปต์ Streamlit นี้
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # -----------------------------
@@ -25,8 +23,10 @@ def read_settings():
             'initial_keywords': settings.get('initial_keywords', ''),
             'temperature': settings.getfloat('temperature', 5.0),
             'num_prompts': settings.getint('num_prompts', 1),
-            'selected_param': settings.get('selected_param', ''),
-            'model': settings.get('model', 'gpt-4o-mini')
+            'model': settings.get('model', 'gpt-4o-mini'),
+            'ar_mode': settings.get('ar_mode', 'Preset'),       # เก็บโหมดว่า "Preset" หรือ "Custom"
+            'ar_preset': settings.get('ar_preset', '--ar 16:9'), # เก็บค่าที่เลือกในกรณีเป็น Preset
+            'ar_custom': settings.get('ar_custom', '')          # เก็บค่าที่ผู้ใช้กรอกเอง
         }
     else:
         return {
@@ -34,26 +34,30 @@ def read_settings():
             'initial_keywords': '',
             'temperature': 5.0,
             'num_prompts': 1,
-            'selected_param': '',
-            'model': 'gpt-4o-mini'
+            'model': 'gpt-4o-mini',
+            'ar_mode': 'Preset',
+            'ar_preset': '--ar 16:9',
+            'ar_custom': ''
         }
 
-def save_settings(api_key, initial_keywords, temperature, num_prompts, selected_param, model):
+def save_settings(api_key, initial_keywords, temperature, num_prompts, model, ar_mode, ar_preset, ar_custom):
     config = configparser.ConfigParser()
     config['DEFAULT'] = {
         'api_key': api_key,
         'initial_keywords': initial_keywords,
         'temperature': temperature,
         'num_prompts': num_prompts,
-        'selected_param': selected_param,
-        'model': model
+        'model': model,
+        'ar_mode': ar_mode,
+        'ar_preset': ar_preset,
+        'ar_custom': ar_custom
     }
     settings_path = os.path.join(script_dir, 'settings.ini')
     with open(settings_path, 'w', encoding='utf-8') as configfile:
         config.write(configfile)
 
 # -----------------------------
-# ฟังก์ชันอ่าน/เขียนไฟล์กฎ (rules.txt)
+# ฟังก์ชันอ่าน rules.txt
 # -----------------------------
 def read_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
@@ -80,28 +84,7 @@ def create_default_rules():
         with open(rules_path, 'w', encoding='utf-8') as f:
             f.write(default_rules)
 
-# -----------------------------
-# ฟังก์ชันอ่าน/เขียนไฟล์พารามิเตอร์ (params.txt)
-# -----------------------------
-def read_params_options():
-    params_path = os.path.join(script_dir, 'params.txt')
-    if os.path.exists(params_path):
-        with open(params_path, 'r', encoding='utf-8') as f:
-            params_list = [line.strip() for line in f if line.strip()]
-            return params_list
-    else:
-        return []
-
-def create_default_params():
-    params_path = os.path.join(script_dir, 'params.txt')
-    if not os.path.exists(params_path):
-        default_params = "--ar 16:9 --p\n--ar 21:9\n--ar 2:3"
-        with open(params_path, 'w', encoding='utf-8') as f:
-            f.write(default_params)
-
-# เรียกใช้สร้างไฟล์เริ่มต้นหากไม่พบ
-create_default_rules()
-create_default_params()
+create_default_rules()  # ถ้าไม่มีไฟล์ rules.txt จะสร้างไฟล์ default ให้
 
 # -----------------------------
 # ส่วนหลักของแอป Streamlit
@@ -121,16 +104,29 @@ def main():
     initial_keywords = st.sidebar.text_input("Initial Keywords", value=settings['initial_keywords'])
     num_prompts = st.sidebar.number_input("Number of Prompts", min_value=1, max_value=100, value=settings['num_prompts'])
     temperature_slider = st.sidebar.slider("Temperature (0-10)", min_value=0, max_value=10, value=int(settings['temperature']))
-    
-    # อ่านรายการพารามิเตอร์จากไฟล์
-    param_options = read_params_options()
-    selected_param = st.sidebar.selectbox("Select Parameter", param_options, 
-                                          index=param_options.index(settings['selected_param']) if settings['selected_param'] in param_options else 0 
-                                          if len(param_options) > 0 else -1)
-    
+
+    st.sidebar.markdown("---")
+    st.sidebar.write("**Aspect Ratio Setting**")
+    ar_mode = st.sidebar.radio("Choose AR Mode", options=["Preset", "Custom"], index=0 if settings['ar_mode'] == "Preset" else 1)
+
+    # ถ้าเลือก preset
+    preset_choices = ["--ar 3:2", "--ar 16:9", "--ar 7:3", "--ar 1:1"]
+    if ar_mode == "Preset":
+        if settings['ar_preset'] in preset_choices:
+            default_index = preset_choices.index(settings['ar_preset'])
+        else:
+            default_index = 1  # default: --ar 16:9
+
+        ar_preset = st.sidebar.selectbox("Select a preset AR", preset_choices, index=default_index)
+        ar_custom = ""
+    else:
+        # เลือก Custom => ให้กรอกค่าเอง
+        ar_preset = ""
+        ar_custom = st.sidebar.text_input("Enter custom AR (e.g. --ar 5:4)", value=settings['ar_custom'])
+
     # ปุ่มบันทึกการตั้งค่า
     if st.sidebar.button("Save Settings"):
-        save_settings(api_key, initial_keywords, temperature_slider, num_prompts, selected_param, model_name)
+        save_settings(api_key, initial_keywords, temperature_slider, num_prompts, model_name, ar_mode, ar_preset, ar_custom)
         st.sidebar.success("Settings saved successfully.")
 
     # -----------------------------
@@ -158,6 +154,9 @@ def main():
                 temperature_mapped = (temperature_value / 10) * 2  # 0-10 -> 0-2
 
                 generated_prompts = []
+                # เลือกว่าจะใช้ preset หรือ custom
+                final_ar = ar_preset if ar_mode == "Preset" else ar_custom
+
                 try:
                     for _ in range(num_prompts):
                         user_message = (
@@ -183,9 +182,10 @@ def main():
                         )
 
                         generated_text = response.choices[0].message['content'].strip()
-                        # เพิ่มพารามิเตอร์ท้าย prompt
-                        if selected_param:
-                            generated_text += ' ' + selected_param
+                        # ถ้า final_ar มีค่า (ไม่เป็นค่าว่าง) ให้เพิ่มต่อท้าย
+                        if final_ar:
+                            generated_text += " " + final_ar
+
                         generated_prompts.append(generated_text)
 
                     # แสดงผล
@@ -200,11 +200,11 @@ def main():
                     st.error(f"An error occurred: {str(e)}")
 
     # -----------------------------
-    # ปุ่มคัดลอกและบันทึก CSV
+    # ปุ่มบันทึก CSV และ Copy
     # -----------------------------
     if 'generated_prompts' in st.session_state and st.session_state['generated_prompts']:
         prompts_text = "\n".join(st.session_state['generated_prompts'])
-        
+
         # ปุ่มดาวน์โหลดเป็น CSV
         csv_file_name = "generated_prompts.csv"
         if st.download_button(
@@ -215,9 +215,10 @@ def main():
         ):
             st.success("CSV file is ready for download!")
 
-        # ปุ่มคัดลอก (ให้ผู้ใช้ copy เองผ่าน text area)
-        st.write("### Copy Prompts")
+        # แสดง TextArea สำหรับคัดลอกทั้งหมดทีเดียว
+        st.write("### Copy All Prompts")
         st.text_area("All Prompts", value=prompts_text, height=150)
+
 
 def convert_to_csv(prompts_list):
     import io
@@ -227,6 +228,7 @@ def convert_to_csv(prompts_list):
     for prompt in prompts_list:
         writer.writerow([prompt])
     return output.getvalue().encode('utf-8')
+
 
 if __name__ == "__main__":
     main()
