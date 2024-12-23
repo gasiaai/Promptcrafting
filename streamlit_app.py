@@ -72,7 +72,6 @@ def create_default_rules():
     if not os.path.exists(rules_path):
         default_rules = (
             "your role is to generate concise names , straight forward and easy to search seo for microstock images, for example : Colorful space galaxy cloud nebula. Stary night cosmos. Universe science astronomy. Supernova background wallpaper "
-            "as numbered lists for more than two inputs, ensuring organization and clarity. Each entry "
             "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
             "approach focuses on straightforward, richly descriptive titles without vague language or "
             "mentioning camera specifics or photography techniques. For example, for suitable images, "
@@ -161,7 +160,7 @@ def main():
                         user_message = (
                             "You are an AI assistant that generates concise SEO-friendly prompts based on given keywords.\n"
                             f"Initial keywords: {initial_keywords}\n"
-                            "Generate concise prompts with 2-3 phrases, separated by commas. Avoid vague language, camera terms, or unnecessary details.\n"
+                            "Generate concise prompts with 2-3 phrases, separated by commas. Avoid vague language, camera terms, or unnecessary details. answer only in english.\n"
                             "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
                             "Each result should be a single sentence. Use examples below as a guideline:\n"
                             "Example:\n"
