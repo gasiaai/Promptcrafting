@@ -161,7 +161,7 @@ def main():
                         user_message = (
                             f"{rules_content}\n"
                             f"Initial keywords: {initial_keywords}\n"
-                            "generate concise names and detailed contexts for microstock images, ensuring each response fits within 77 tokens. It structures responses as numbered lists for more than two inputs, ensuring organization and clarity. Each entry is crafted without quotation marks or dashes, using commas for separation. This approach focuses on straightforward, richly descriptive titles without vague language or mentioning camera specifics or photography techniques. For example, for suitable images, it might generate 1. Watercolor Technique, Abstract vibrant background with watercolor blending, Artistic Expression, ensuring clarity, relevance, and rich descriptiveness within the token limit.\n"
+                            "Generate a concise with good SEO title from the input, within 77 tokens.\n"
                             "Avoid photography-related words like realistic, natural lighting, photography, etc.\n"
                             "No quotation marks or dashes, use commas for separation if needed.\n"
                             "Focus on straightforward, richly descriptive titles without vague language or mentioning camera specifics or photography techniques.\n"
