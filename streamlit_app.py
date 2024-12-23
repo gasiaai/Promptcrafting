@@ -71,7 +71,7 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "your role is to generate concise names , straight forward and easy to search seo for microstock images, "
+            "your role is to generate concise names , straight forward and easy to search seo for microstock images, for example : Colorful space galaxy cloud nebula. Stary night cosmos. Universe science astronomy. Supernova background wallpaper "
             "as numbered lists for more than two inputs, ensuring organization and clarity. Each entry "
             "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
             "approach focuses on straightforward, richly descriptive titles without vague language or "
