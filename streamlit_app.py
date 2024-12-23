@@ -191,7 +191,7 @@ def main():
                     # แสดงผล
                     st.success("Prompts generated successfully!")
                     for i, prompt in enumerate(generated_prompts, start=1):
-                        st.text_area(f"Prompt #{i}", value=prompt, height=60)
+                        st.text_area(f"Prompt #{i}", value=prompt, height=100)
 
                     # เก็บ prompts ไว้ใน session_state เพื่อใช้ต่อ (เช่น save CSV)
                     st.session_state['generated_prompts'] = generated_prompts
