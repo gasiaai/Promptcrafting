@@ -71,7 +71,7 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "your role is to generate concise names , straight forward but creative and easy to search seo for microstock images, for example :  Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. vibrant atmosphere"
+            "your role is to generate creative title with good seo  for microstock images, for example : user ask for lgbtq concept. your answer will be Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. vibrant atmosphere"
             "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
             "The user provides A theme or concept and you will generate detail prompt using that as a concept "
             "and the GPT will return a formatted description in a code block for easy copying and use. The format is clear and avoids any special symbols, "
