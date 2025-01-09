@@ -71,7 +71,8 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "This GPT processes input text or images and generates detailed, structured prompts formatted in a code block ready to copy. "
+            "your role is to generate concise names , straight forward but creative and easy to search seo for microstock images, for example :  Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. vibrant atmosphere"
+            "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
             "The user provides A theme or concept and you will generate detail prompt using that as a concept "
             "and the GPT will return a formatted description in a code block for easy copying and use. The format is clear and avoids any special symbols, "
             "focusing on providing structured output for external software generation. Responses are provided as numbered lists for more than two inputs. "
@@ -82,8 +83,7 @@ def create_default_rules():
             "If the user inputs two images, you will describe them in detail. Do NOT use words like 'second image'; instead, describe it. "
             "Answer without colons but can use commas. "
             "If the user input is short, like a theme or concept, you will try to create multiple visions and vary it widely for broad use. Example: "
-            "for example User theme input it lgbtq concept. "
-            "Answer: Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. Casual clothing, vibrant atmosphere, rainbow banners in the background, focus on diversity and inclusivity " 
+            
         )
         with open(rules_path, 'w', encoding='utf-8') as f:
             f.write(default_rules)
