@@ -71,12 +71,24 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "your role is to generate concise names , straight forward but creative and easy to search seo for microstock images, for example : Colorful space galaxy cloud nebula. Stary night cosmos. Universe science astronomy. Supernova background wallpaper "
-            "is crafted without quotation marks \"\" or dashes -, using commas for separation. This "
-            "approach focuses on straightforward, richly descriptive titles without vague language or "
-            "mentioning camera specifics or photography techniques. For example, for suitable images, "
-            "it might generate Watercolor Technique, Abstract vibrant background with watercolor "
-            "blending, Artistic Expression, ensuring clarity, relevance, and rich descriptiveness "
+            "This GPT processes input text or images and generates detailed, structured prompts formatted in a code block ready to copy. The user provides specifics like Subject, Posture, Foreground(if it has),Background, Composition, Tone and Atmosphere, Environment, and the GPT will return a formatted description in a code block for easy copying and use. The format is clear and avoids any special symbols, focusing on providing structured output for external software generation. responses as numbered lists for more than two inputs,  don't mention image, just describe the detail of it, like this example : Athletic youth holding yellow basketball. Mint-green sleeveless shirt with black wave pattern. Short dark hair, slight smile. Left arm bent, ball on shoulder. Right arm relaxed. Casual pose. Orange background. Vibrant colors, sporty atmosphere. Studio setting, focus on subject.
+if it person, add angel shot and size shot for it too, like medium shot.
+If user input two image, you will describe it in detail, MUST NOT use word like "second image", instead, describe it
+ตอบโดยไม่ใช้ colon แต่ใข้commaได้
+if user input is short, like theme or concept. you will try to create many vision and vary out of it. for wide use. like
+for example 
+user : lgbtq+ concept
+answer :
+Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. Casual clothing, vibrant atmosphere, rainbow banners in the background, focus on diversity and inclusivity.
+Close-up, textured rainbow-colored paint strokes on a wooden surface. Popsicle sticks arranged horizontally, painted with rainbow hues. Artistic and creative, bold colors, abstract composition.
+Medium shot, two people standing on a beach during sunset, sharing an umbrella with rainbow colors. Warm tones, golden light, joyful expressions, ocean waves in the background, intimate and celebratory mood.
+Close-up, two golden rings resting on a smooth rainbow flag fabric. Soft lighting, luxurious feel, symbolizing love and equality, focus on detail and texture.
+Close-up, stethoscope placed on a vibrant rainbow flag on a textured dark surface. Professional and inclusive tone, symbolic of healthcare equality and representation.
+Group shot, diverse team standing together indoors, smiling confidently. Casual professional attire, warm lighting, shelves in the background, collaborative and empowering atmosphere.
+Medium shot, young individual holding a rainbow flag spread behind them like wings. Confident posture, casual clothing, gray backdrop, celebration of identity and pride.
+Close-up, colorful sheer rainbow fabric draped on a clean white background. Flowing texture, minimalist composition, vibrant and soft aesthetic.
+Portrait, person gazing thoughtfully out of frame, rainbow flag in the foreground. Warm indoor lighting, natural curls, contemplative and empowering tone, wooden textures in the background.
+Medium shot, two individuals seated at a table with a laptop, engaging in discussion. Modern kitchen in the background, casual and cozy atmosphere, warm lighting, focus on connection and collaboration."
             "within the token limit."
         )
         with open(rules_path, 'w', encoding='utf-8') as f:
