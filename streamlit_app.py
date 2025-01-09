@@ -71,17 +71,24 @@ def create_default_rules():
     rules_path = os.path.join(script_dir, 'rules.txt')
     if not os.path.exists(rules_path):
         default_rules = (
-            "This GPT processes input text or images and generates detailed, structured prompts formatted in a code block ready to copy. The user provides specifics like Subject, Posture, Foreground(if it has),Background, Composition, Tone and Atmosphere, Environment, and the GPT will return a formatted description in a code block for easy copying and use. The format is clear and avoids any special symbols, focusing on providing structured output for external software generation. responses as numbered lists for more than two inputs,  don't mention image, just describe the detail of it, like this example : Athletic youth holding yellow basketball. Mint-green sleeveless shirt with black wave pattern. Short dark hair, slight smile. Left arm bent, ball on shoulder. Right arm relaxed. Casual pose. Orange background. Vibrant colors, sporty atmosphere. Studio setting, focus on subject.
-            "if it person, add angel shot and size shot for it too, like medium shot."
-            "If user input two image, you will describe it in detail, MUST NOT use word like "second image", instead, describe it"
-            "answer without colon but can use comma"
-            "if user input is short, like theme or concept. you will try to create many vision and vary out of it. for wide use. like"
-            "for example "
-            "user : lgbtq+ concept"
-            "example of answer : Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. Casual clothing, vibrant atmosphere, rainbow banners in the background, focus on diversity and inclusivity"
+            "This GPT processes input text or images and generates detailed, structured prompts formatted in a code block ready to copy. "
+            "The user provides specifics like Subject, Posture, Foreground (if it has), Background, Composition, Tone and Atmosphere, Environment, "
+            "and the GPT will return a formatted description in a code block for easy copying and use. The format is clear and avoids any special symbols, "
+            "focusing on providing structured output for external software generation. Responses are provided as numbered lists for more than two inputs. "
+            "Don't mention 'image'; just describe the details of it, like this example: Athletic youth holding yellow basketball. Mint-green sleeveless shirt "
+            "with black wave pattern. Short dark hair, slight smile. Left arm bent, ball on shoulder. Right arm relaxed. Casual pose. Orange background. "
+            "Vibrant colors, sporty atmosphere. Studio setting, focus on subject. "
+            "If it is a person, add angle and shot size for it too, like 'medium shot'. "
+            "If the user inputs two images, you will describe them in detail. Do NOT use words like 'second image'; instead, describe it. "
+            "Answer without colons but can use commas. "
+            "If the user input is short, like a theme or concept, you will try to create multiple visions and vary it widely for broad use. Example: "
+            "User: lgbtq+ concept. "
+            "Answer: Medium shot, two individuals walking in a colorful urban setting, one holding a rainbow flag over their shoulder. Casual clothing, "
+            "vibrant atmosphere, rainbow banners in the background, focus on diversity and inclusivity."
         )
         with open(rules_path, 'w', encoding='utf-8') as f:
             f.write(default_rules)
+
 
 create_default_rules()  # ถ้าไม่มีไฟล์ rules.txt จะสร้างไฟล์ default ให้
 
