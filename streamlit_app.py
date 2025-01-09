@@ -173,7 +173,6 @@ def main():
                     f"Initial keywords: {initial_keywords}\n"
                     "Generate a concise SEO-friendly prompt with 2-3 phrases, separated by commas, in a single line.\n"
                     "Avoid vague language, camera terms, or unnecessary details. Answer only in English.\n"
-                    "Focus on impactful, descriptive titles that enhance searchability and stay within 77 tokens.\n"
                     "Use only one sentence, no bullet points, no extra line breaks.\n"
                     "Example (SINGLE LINE): Business Theme Ideas, Creative concepts for corporate branding, Engaging corporate event themes.\n"
                 )
